@@ -1,5 +1,6 @@
 <?php
 //list user
+// cambio
 Router::connect('/admin/users', array('plugin' => 'acl', 'controller' => 'users', 'action'=>'index'));
 //register
 Router::connect('/users/register', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'register'));
