@@ -1,0 +1,1 @@
+<?php echo $this->Html->image('/acl/img/icons/allow-' . $allowed . '.png'); ?>
