@@ -69,7 +69,7 @@
 						</div><!-- /widget-main -->
 
 						<div class="toolbar clearfix">
-							<div class="col-md-9">
+							<div class="col-md-9" style="width: 100%">
 								<a href="#" onclick="show_box('forgot-box'); return false;" class="forgot-password-link white">
 									<i class="icon-arrow-left"></i>
 									<?= __( "He olvidado mi contraseña")?>
