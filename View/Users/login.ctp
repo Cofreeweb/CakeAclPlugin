@@ -3,8 +3,8 @@
 		<div class="login-container">
 			<div class="center">
 				<h1>
-					<span class="green"><i class="icon-cog white"></i> Infociti</span>
-					<span class="white">Entrada</span>
+					<span class="green"><i class="icon-cog white"></i> <?= Configure::read( 'Config.siteName') ?></span>
+					<span class="white"><?= __d( 'admin', 'Entrada') ?></span>
 				</h1>
 			</div>
 
