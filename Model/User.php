@@ -10,7 +10,18 @@ class User extends AclAppModel
 {
     public $name = 'User';
     public $useTable = "users";
-    public $actsAs = array('Acl' => array('type' => 'requester'));
+    public $actsAs = array(
+        'Acl' => array(
+            'type' => 'requester'
+        ),
+        'Cofree.Sluggable' => array(
+        		'fields' => array(
+        		    'name',
+        		),
+        ),
+    );
+    
+    
     public $validate = array(
         'name' => array(
             'required' => true,

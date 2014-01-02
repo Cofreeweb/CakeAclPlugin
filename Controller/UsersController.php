@@ -1,72 +1,79 @@
 <?php
 
+/**
+ * Users Controller
+ *
+ * Eventos
+ *
+ * Acl.Controller.Users.beforeFilter
+ * Acl.Controller.Users.beforeLogin
+ * Acl.Controller.Users.afterLogin
+ * Acl.Controller.Users.afterAdminCreate
+ * 
+ *
+ * @package acl
+ */
+ 
+
 App::uses('AclAppController', 'Acl.Controller');
 App::uses('CakeEmail', 'Network/Email');
 App::uses('AclSender', 'Acl.Lib');
 
-/**
- * Users Controller
- *
- * @property User $User
- */
-class UsersController extends AclAppController {
 
+class UsersController extends AclAppController 
+{
     public $uses = array('Acl.User');
 
-    function beforeFilter() {
-        parent::beforeFilter();
-        App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
-        $this->layout = "admin";
+    function beforeFilter() 
+    {
+      parent::beforeFilter();
+      App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
+      $this->layout = "admin";
 
-        $this->Auth->allow( 'login', 'logout', 'forgot_password', 'register', 'activate_password', 'confirm_register', 'confirm_email_update');
+      $this->Auth->allow( 'login', 'logout', 'forgot_password', 'register', 'activate_password', 'confirm_register', 'confirm_email_update');
 
-        $this->User->bindModel(array('belongsTo'=>array(
-            'Group' => array(
-                'className' => 'Acl.Group',
-                'foreignKey' => 'group_id',
-                'dependent'=>true
-            )
-        )), false);
+      $this->User->bindModel(array('belongsTo'=>array(
+          'Group' => array(
+              'className' => 'Acl.Group',
+              'foreignKey' => 'group_id',
+              'dependent'=>true
+          )
+      )), false);
+      
+      // BeforeFilter Event
+      $event = new CakeEvent( 'Acl.Controller.Users.beforeFilter', $this);
+  		$this->getEventManager()->dispatch($event);
+  		
     }
-    /**
-     * Temp acl init db
-     */
-//    function initDB() {
-//        $this->autoRender = false;
-//
-//        $group = $this->User->Group;
-//        //Allow admins to everything
-//        $group->id = 1;
-//        $this->Acl->allow($group, 'controllers');
-//
-//        //allow managers to posts and widgets
-//        $group->id = 2;
-//        $this->Acl->deny($group, 'controllers');
-//        //$this->Acl->allow($group, 'controllers/Posts'); //allow all action of controller posts
-//        $this->Acl->allow($group, 'controllers/Posts/add');
-//        $this->Acl->deny($group, 'controllers/Posts/edit');
-//
-//        //we add an exit to avoid an ugly "missing views" error message
-//        echo "all done";
-//        exit;
-//    }
+
     /**
      * login method
      *
      * @return void
      */
-    function login() {
+    function login() 
+    {
       $this->layout = "login";
-        if( $this->request->is('post')) {
-            if( $this->Auth->login()) 
-            {
-                $this->redirect($this->Auth->redirect());
-            } 
-            else 
-            {
-              
-            }
+      
+      // BeforeLogin Event
+      $event = new CakeEvent( 'Acl.Controller.Users.beforeLogin', $this);
+  		$this->getEventManager()->dispatch($event);
+  		
+      if( $this->request->is('post')) 
+      {
+        if( $this->Auth->login()) 
+        {
+          // AfterLogin Event
+          $event = new CakeEvent( 'Acl.Controller.Users.afterLogin', $this);
+      		$this->getEventManager()->dispatch($event);
+      		
+          $this->redirect($this->Auth->redirect());
+        } 
+        else 
+        {
+          
         }
+      }
     }
     /**
      * logout method
@@ -75,7 +82,7 @@ class UsersController extends AclAppController {
      */
     function logout() 
     {
-        $this->redirect($this->Auth->logout());
+        $this->redirect( $this->Auth->logout());
     }
     /**
      * index method
@@ -89,7 +96,10 @@ class UsersController extends AclAppController {
 
         $this->User->recursive = 1;
         $this->paginate = array(
-            'limit' => 10
+            'limit' => 10,
+            'conditions' => array(
+                'Group.level >=' => $this->Auth->user( 'Group.level') 
+            )
         );
         $this->set('users', $this->paginate("User"));
     }
@@ -122,6 +132,10 @@ class UsersController extends AclAppController {
 
         if( $this->User->save( $this->request->data)) 
         {
+          // afterAdminCreate Event
+          $event = new CakeEvent( 'Acl.Controller.Users.afterAdminCreate', $this);
+      		$this->getEventManager()->dispatch($event);
+      		
           $user = $this->User->read( null, $this->User->id);
           AclSender::send( 'add', $user, $password);
           $this->Manager->flashSuccess( __d( 'admin', 'El usuario ha sido creado correctamente'));
@@ -133,8 +147,7 @@ class UsersController extends AclAppController {
         }
       }
       
-      $groups = $this->User->Group->find('list');
-      $this->set( compact( 'groups'));
+      $this->__setAdminGroups();
     }
 
     /**
@@ -145,15 +158,19 @@ class UsersController extends AclAppController {
      */
     public function admin_edit($id = null) 
     {      
-      
       if( !$id)
       {
         $id = $this->Auth->user( 'id');
       }
       
-      $this->User->id = $id;
+      $user = $this->User->find( 'first', array(
+          'conditions' => array(
+              'User.id' => $id,
+              'Group.level >=' => $this->Auth->user( 'Group.level') 
+          )
+      ));
       
-      if( !$this->User->exists()) 
+      if( !$user) 
       {
          throw new NotFoundException( __('Invalid user'));
       }
@@ -196,12 +213,21 @@ class UsersController extends AclAppController {
       } 
       else 
       {
-          $this->request->data = $this->User->read(null, $id);
+          $this->request->data = $user;
           $this->request->data['User']['password'] = null;
       }
 
-      $groups = $this->User->Group->find('list');
-      $this->set(compact('groups'));
+      $this->__setAdminGroups();
+    }
+    
+    public function __setAdminGroups()
+    {
+      $groups = $this->User->Group->find('list', array(
+          'conditions' => array(
+              'Group.level >=' => $this->Auth->user( 'Group.level') 
+          )
+      ));
+      $this->set( compact( 'groups'));
     }
 
     /**
@@ -246,38 +272,44 @@ class UsersController extends AclAppController {
      *
      * @return void
      */
-    public function register() {
-        if( $this->request->is('post')) {
-            $this->loadModel('Acl.User');
-            $this->User->create();
-            $this->request->data['User']['group_id']    = 2;//member
-            $this->request->data['User']['status']      = 0;//active user
-            $token = String::uuid();
-            $this->request->data['User']['token']         = $token;//key
-            if( $this->User->save($this->request->data)) {
-                $ident = $this->User->getLastInsertID();
-                $comfirm_link = Router::url("/acl/users/confirm_register/$ident/$token", true);
+    public function register() 
+    {
+      if( $this->request->is('post')) 
+      {
+        $this->loadModel('Acl.User');
+        $this->User->create();
+        $this->request->data['User']['group_id']    = 2;//member
+        $this->request->data['User']['status']      = 0;//active user
+        $token = String::uuid();
+        $this->request->data['User']['token']         = $token;//key
+        
+        if( $this->User->save($this->request->data)) 
+        {
+          $ident = $this->User->getLastInsertID();
+          $comfirm_link = Router::url("/acl/users/confirm_register/$ident/$token", true);
 
-                $cake_email = new CakeEmail();
-                $cake_email->from(array('no-reply@example.com' => 'Please Do Not Reply'));
-                $cake_email->to($this->request->data['User']['email']);
-                $cake_email->subject(''.__('Register Confirm Email'));
-                $cake_email->viewVars(array('comfirm_link'=>$comfirm_link));
-                $cake_email->emailFormat('html');
-                $cake_email->template('Acl.register_confirm_email');
-                $cake_email->send();
+          $cake_email = new CakeEmail();
+          $cake_email->from(array('no-reply@example.com' => 'Please Do Not Reply'));
+          $cake_email->to($this->request->data['User']['email']);
+          $cake_email->subject(''.__('Register Confirm Email'));
+          $cake_email->viewVars(array('comfirm_link'=>$comfirm_link));
+          $cake_email->emailFormat('html');
+          $cake_email->template('Acl.register_confirm_email');
+          $cake_email->send();
 
 
-                $this->Session->setFlash(__('Thank you for sign up! Please check your email to complete registration.'), 'alert/success');
-                $this->request->data = null;
-                $this->redirect(array('action' => 'login'));
-            } else {
-                $this->Session->setFlash(__('Register could not be completed. Please, try again.'), 'alert/error');
-                $this->redirect(array('action' => 'login'));
-            }
+          $this->Session->setFlash(__('Thank you for sign up! Please check your email to complete registration.'), 'alert/success');
+          $this->request->data = null;
+          $this->redirect(array('action' => 'login'));
+        } 
+        else 
+        {
+          $this->Session->setFlash(__('Register could not be completed. Please, try again.'), 'alert/error');
+          $this->redirect(array('action' => 'login'));
         }
-        $groups = $this->User->Group->find('list');
-        $this->set(compact('groups'));
+      }
+      $groups = $this->User->Group->find('list');
+      $this->set(compact('groups'));
     }
     /**
     * confirm register
