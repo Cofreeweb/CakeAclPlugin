@@ -3,8 +3,7 @@
 		<div class="login-container">
 			<div class="center">
 				<h1>
-					<span class="green"><i class="icon-cog white"></i> <?= Configure::read( 'Config.siteName') ?></span>
-					<span class="white"><?= __d( 'admin', 'Entrada') ?></span>
+					<span class="white"><?= __d( 'admin', 'Recuperar contraseña') ?></span>
 				</h1>
 			</div>
 
@@ -16,26 +15,13 @@
 						<div class="widget-main">
 							<h4 class="header blue lighter bigger">
 								<i class="icon-arrow-down green"></i>
-								<?= __( "Por favor, introduzca los datos")?>
+								<?= __( "Por favor, introduce los datos")?>
 							</h4>
 
 							<div class="space-6"></div>
 
 							<?= $this->Form->create( 'User') ?>
 								<fieldset>
-									<label class="block clearfix">
-										<span class="block input-icon input-icon-right">
-											<?= $this->Form->input( 'User.email', array(
-                        'label' => false,
-                        'div' => false,
-                        'class' => 'form-control',
-                        'placeholder' => __( "Email"),
-                        'type' => 'text'
-											))?>
-											<i class="icon-user"></i>
-										</span>
-									</label>
-
 									<label class="block clearfix">
 										<span class="block input-icon input-icon-right">
 											<?= $this->Form->input( 'User.password', array(
@@ -45,42 +31,38 @@
                         'placeholder' => __( "Contraseña"),
                         'type' => 'password'
 											))?>
-											<i class="icon-lock"></i>
+											<i class="icon-user"></i>
 										</span>
 									</label>
-
+								  
+								  <label class="block clearfix">
+										<span class="block input-icon input-icon-right">
+											<?= $this->Form->input( 'User.password2', array(
+                        'label' => false,
+                        'div' => false,
+                        'class' => 'form-control',
+                        'placeholder' => __( "Repite contraseña"),
+                        'type' => 'password'
+											))?>
+											<i class="icon-user"></i>
+										</span>
+									</label>
+									
 									<div class="space"></div>
-
 									<div class="clearfix">
-										<label class="inline">
-											<input type="checkbox" class="ace" />
-											<span class="lbl"> <?= __( "Recordar")?></span>
-										</label>
-
 										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
 											<i class="icon-key"></i>
-											<?= __( "Entrar") ?>
+											<?= __( "Enviar") ?>
 										</button>
 									</div>
 
 									<div class="space-4"></div>
 								</fieldset>
+								<?php echo $this->Form->hidden('ident', array('value' => $ident)); ?>
+                <?php echo $this->Form->hidden('activate', array('value' => $activate)); ?>
               <?= $this->Form->end() ?>
 						</div><!-- /widget-main -->
 
-						<div class="toolbar clearfix">
-							<div class="col-md-9" style="width: 100%">
-								<a href="<?= $this->Html->url( array(
-								    'admin' => true,
-								    'plugin' => 'acl',
-								    'controller' => 'users',
-								    'action' => 'forgot_password'
-								)) ?>" class="forgot-password-link white">
-									<i class="icon-arrow-left"></i>
-									<?= __( "He olvidado mi contraseña")?>
-								</a>
-							</div>
-						</div>
 					</div><!-- /widget-body -->
 				</div><!-- /login-box -->
 			</div><!-- /position-relative -->

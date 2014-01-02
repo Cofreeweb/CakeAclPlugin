@@ -130,35 +130,38 @@ class User extends AclAppModel
       return $r;
     }
 
-    function forgotPassword($email) {
-        $user = $this->find('first', array("conditions" => array("User.email"=> $email)));
-        if( $user) {
-            $id = $user['User']['id'];
-            $password = $user['User']['password'];
+    function forgotPassword( $email) 
+    {
+      $user = $this->find( 'first', array(
+          "conditions" => array(
+              "User.email" => $email
+          )
+      ));
+      
+      if( $user) 
+      {
+        $id = $user['User']['id'];
 
-            $salt = Configure::read("Security.salt");
-            $activate_key = md5($password . $salt);
-            $expiredTime = strtotime(date('Y-m-d H:i', strtotime('+24 hours')));
+        $salt = Configure::read( "Security.salt");
+        $activate_key = md5( $user['User']['password'] . $salt);
+        $expiredTime = strtotime( date( 'Y-m-d H:i', strtotime( '+24 hours')));
 
-            $link = Router::url("/users/activate_password/$id/$activate_key/$expiredTime", true);
-            $link = "<a href='".$link."' target='_blank'>".$link."</a>";
+        $link = Router::url( array(
+            'plugin' => 'acl',
+            'controller' => 'users',
+            'action' => 'activate_password',
+            $id,
+            $activate_key,
+            $expiredTime
+        ), true);
 
-            $message = __("Forgot your password, %s ?<br> We received a request to reset the password for your account( %s) .<br> If you want to reset your password, please click on the link below( or copy and paste the URL into your browser).
-            <br><br>%s<br><br>This link takes you to a secure page where you can change your password. <br>However, if you don’t want to reset your password, please ignore this message.
-            <br><br>Yours sincerely,<br>", $user['User']['name'], $user['User']['email'], $link);
-
-            $cake_email = new CakeEmail();            
-            $cake_email->from(array('no-reply@example.com' => 'Please Do Not Reply'));
-            $cake_email->to($email);
-            $cake_email->subject(''.__('Forgot Password'));
-            $cake_email->emailFormat('html');
-            $cake_email->send($message);
-
-            return true;
-        }
-        else {
-            return false;
-        }
+        AclSender::send( 'adminForgotPassword', $user, Configure::read( 'Config.siteName'), $link);
+        return true;
+      }
+      else 
+      {
+        return false;
+      }
     }
     
     function confirmRegister($id, $token) {

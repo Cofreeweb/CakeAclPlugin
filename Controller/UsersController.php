@@ -30,7 +30,18 @@ class UsersController extends AclAppController
       App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
       $this->layout = "admin";
 
-      $this->Auth->allow( 'login', 'logout', 'forgot_password', 'register', 'activate_password', 'confirm_register', 'confirm_email_update');
+      $this->Auth->allow( 
+        'login', 
+        'admin_login',
+        'logout', 
+        'forgot_password', 
+        'admin_forgot_password',
+        'register', 
+        'activate_password', 
+        'admin_activate_password',
+        'confirm_register', 
+        'confirm_email_update'
+      );
 
       $this->User->bindModel(array('belongsTo'=>array(
           'Group' => array(
@@ -75,6 +86,13 @@ class UsersController extends AclAppController
         }
       }
     }
+    
+    
+    public function admin_login()
+    {
+      $this->login();
+    }
+    
     /**
      * logout method
      *
@@ -328,55 +346,91 @@ class UsersController extends AclAppController
     * forgot password
     * @return void
     */
-    public function forgot_password() {
-        if( $this->request->is('post')) {
-            //$this->autoRender = false;
-            $email = $this->request->data["User"]["email"];
-            if( $this->User->forgotPassword($email)) {
-                $this->Session->setFlash(__('Please check your email for instructions on resetting your password.'), 'alert/success');
-                $this->redirect(array('action' => 'login'));
-            } else {
-                $this->Session->setFlash(__('Your email is invalid or not registered.'), 'alert/error');
-            }
+    public function forgot_password() 
+    {
+      if( $this->request->is('post')) 
+      {
+        $email = $this->request->data ["User"]["email"];
+        
+        if( $this->User->forgotPassword( $email)) 
+        {
+          $this->Manager->flashSuccess( __( 'Por favor, revisa tu correo electrónico.'));
+          $this->redirect( array('action' => 'login'));
+        } 
+        else 
+        {
+          $this->Manager->flashError( __( 'El email no es válido o no está en nuestra base de datos'));
         }
+      }
     }
+    
+    public function admin_forgot_password()
+    {
+      $this->layout = 'login';
+      $this->forgot_password();
+    }
+    
     /**
     * active password
     * @return void
     */
-    public function activate_password($ident=null, $activate=null, $expiredTime) {//echo $ident.'  '.$activate;
-        $nowTime = strtotime(date('Y-m-d H:i'));
-        if(empty($expiredTime) || $nowTime > $expiredTime){
-            $this->Session->setFlash(__('Your link had been expired.'), 'alert/error');
-            $this->redirect(array('action' => 'login'));
-        }
+    public function activate_password( $ident = null, $activate = null, $expiredTime) 
+    {
+      $nowTime = strtotime( date( 'Y-m-d H:i'));
+      
+      if( empty( $expiredTime) || $nowTime > $expiredTime)
+      {
+        $this->Manager->flashError( __( 'El enlace ha caducado'));
+        $this->redirect( array('action' => 'login'));
+      }
 
-        if( $this->request->is('post')) {
-            if( !empty($this->request->data['User']['ident']) && !empty($this->request->data['User']['activate'])) {
-                $this->set('ident', $this->request->data['User']['ident']);
-                $this->set('activate', $this->request->data['User']['activate']);
+      if( $this->request->is( 'post')) 
+      {
+        if( !empty( $this->request->data ['User']['ident']) && !empty( $this->request->data ['User']['activate'])) 
+        {
+          $this->set( 'ident', $this->request->data ['User']['ident']);
+          $this->set( 'activate', $this->request->data ['User']['activate']);
 
-                $return = $this->User->activatePassword($this->request->data);
-                if( $return) {
-                    $this->User->set($this->request->data);
-                    if( $this->User->validates()) {
-                        $this->request->data['User']['id'] = $this->request->data['User']['ident'];
-                        if($this->User->saveAll($this->request->data['User'], array('validate'=>false))){
-                            $this->Session->setFlash(__('New password is saved.'), 'alert/success');
-                            $this->redirect(array('action' => 'login'));
-                        }
-                    }else{
-                        $errors = $this->User->validationErrors;
-                        $this->Session->setFlash(__('Error Occur!'), 'alert/error');
-                    }
-                } else {
-                    $this->Session->setFlash(__('Sorry password could not be saved. Please check your email and click the password reset link again.'), 'alert/error');
-                }
+          $return = $this->User->activatePassword( $this->request->data);
+        
+          if( $return) 
+          {
+            $this->User->set( $this->request->data);
+            
+            if( $this->User->validates()) 
+            {
+              $this->request->data ['User']['id'] = $this->request->data ['User']['ident'];
+              
+              if($this->User->saveAll( $this->request->data ['User'], array( 'validate'=>false)))
+              {
+                $this->Manager->flashSuccess( __('La nueva contraseña ha sido guardada'));
+                $this->redirect( array( 'action' => 'login'));
+              }
             }
+            else
+            {
+              $errors = $this->User->validationErrors;
+              $this->Manager->flashError( __('Error Occur!'));
+            }
+          } 
+          else 
+          {
+            $this->Manager->flashError( __( 'No ha podido guardarse la nueva contraseña. Por favor, haz click de nuevo en el enlace del email que te enviamos.'));
+          }
         }
-        $this->set(compact('ident', 'activate'));
+      }
+      
+      $this->set( compact( 'ident', 'activate'));
     }
-
+    
+    
+    public function admin_activate_password( $ident=null, $activate=null, $expiredTime)
+    {
+      $this->layout = 'login';
+      $this->activate_password( $ident, $activate, $expiredTime);
+    }
+    
+    
     /**
      * edit profile method
      *
