@@ -63,9 +63,7 @@ class UsersController extends AclAppController
      * @return void
      */
     function login() 
-    {
-      $this->layout = "login";
-      
+    {      
       // BeforeLogin Event
       $event = new CakeEvent( 'Acl.Controller.Users.beforeLogin', $this);
   		$this->getEventManager()->dispatch($event);
@@ -90,6 +88,7 @@ class UsersController extends AclAppController
     
     public function admin_login()
     {
+      $this->layout = "login";
       $this->login();
     }
     
