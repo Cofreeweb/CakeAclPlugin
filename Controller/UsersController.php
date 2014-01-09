@@ -27,8 +27,8 @@ class UsersController extends AclAppController
     function beforeFilter() 
     {
       parent::beforeFilter();
-      App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
-      $this->layout = "admin";
+      // App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
+      // $this->layout = "admin";
 
       $this->Auth->allow( 
         'login', 
@@ -292,29 +292,38 @@ class UsersController extends AclAppController
      */
     public function register() 
     {
-      if( $this->request->is('post')) 
+      if( $this->request->is( 'post')) 
       {
-        $this->loadModel('Acl.User');
+        $this->loadModel( 'Acl.User');
         $this->User->create();
-        $this->request->data['User']['group_id']    = 2;//member
-        $this->request->data['User']['status']      = 0;//active user
-        $token = String::uuid();
-        $this->request->data['User']['token']         = $token;//key
         
-        if( $this->User->save($this->request->data)) 
+        // Grupo por defecto
+        if( Configure::read( 'Acl.defaults.group'))
         {
-          $ident = $this->User->getLastInsertID();
-          $comfirm_link = Router::url("/acl/users/confirm_register/$ident/$token", true);
-
-          $cake_email = new CakeEmail();
-          $cake_email->from(array('no-reply@example.com' => 'Please Do Not Reply'));
-          $cake_email->to($this->request->data['User']['email']);
-          $cake_email->subject(''.__('Register Confirm Email'));
-          $cake_email->viewVars(array('comfirm_link'=>$comfirm_link));
-          $cake_email->emailFormat('html');
-          $cake_email->template('Acl.register_confirm_email');
-          $cake_email->send();
-
+          $group_id = $this->User->Group->field( 'id', array(
+              'Group.slug' => Configure::read( 'Acl.defaults.group')
+          ));
+          
+          $this->request->data ['User']['group_id'] = $group_id;
+        }
+        
+        if( Configure::read( 'Acl.defaults.status'))
+        {
+          $this->request->data ['User']['status'] = Configure::read( 'Acl.defaults.status');
+        }
+        
+        $token = String::uuid();
+        $this->request->data ['User']['token'] = $token;//key
+        
+        if( $this->User->save( $this->request->data)) 
+        {
+          $link = Router::url( array(
+              'plugin' => 'acl',
+              'controller' => 'users',
+              'action' => 'confirm_register',
+              $user ['User']['id'],
+              $user ['User']['key']
+          ), true);
 
           $this->Session->setFlash(__('Thank you for sign up! Please check your email to complete registration.'), 'alert/success');
           $this->request->data = null;
@@ -326,6 +335,7 @@ class UsersController extends AclAppController
           $this->redirect(array('action' => 'login'));
         }
       }
+      
       $groups = $this->User->Group->find('list');
       $this->set(compact('groups'));
     }

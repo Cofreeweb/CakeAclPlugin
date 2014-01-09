@@ -1,7 +1,12 @@
 <?
 class AclSchema extends CakeSchema {
   
-  public function __construct($options = array())
+/**
+ * Se puede definir Configure::read( 'Acl.schema.{table}') para modificar el esquema de la tabla users como la de groups 
+ *
+ * @param array $options 
+ */
+  public function __construct( $options = array())
   {
     $tables = array(
         'users',
@@ -12,7 +17,18 @@ class AclSchema extends CakeSchema {
     {
       if( Configure::read( 'Acl.schema.'. $table))
       {
-        $this->$table = array_merge( $this->$table, Configure::read( 'Acl.schema.'. $table));
+        $schema = Configure::read( 'Acl.schema.'. $table);
+        
+        if( isset( $schema ['indexes']))
+        {
+          $_schema =  $this->$table;
+
+          $_schema ['indexes']  = array_merge( $_schema ['indexes'], $schema ['indexes']);
+          $this->$table = $_schema;
+          unset( $schema ['indexes']);
+        }
+        
+        $this->$table = array_merge( $this->$table, $schema);
       }
     }
     

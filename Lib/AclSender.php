@@ -24,4 +24,23 @@ class AclSender extends EmailSender
           ->viewVars( compact( 'user', 'webname', 'link'))
           ->to( $user ['User']['email']);
   }
+  
+  protected function registration( CakeEmail $Email, $user)
+  {
+    $Email->subject( __( "¡Welcome to Ebident!"));
+        
+    $link = Router::url( array(
+        'plugin' => 'acl_management',
+        'controller' => 'users',
+        'action' => 'confirm_register',
+        $user ['User']['id'],
+        $user ['User']['key']
+    ), true);
+		
+		$Email->viewVars( compact( 'link'));
+		
+    $Email->template( 'Users/registration', 'users');
+    $Email->to( $user ['User']['email']);
+    $Email->viewVars( compact( 'user'));
+  }
 }

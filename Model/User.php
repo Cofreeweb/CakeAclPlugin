@@ -1,7 +1,16 @@
 <?php
+
 /**
  * User Model
+ *
+ * Eventos
+ *
+ * Acl.Model.User.construct
+ * 
+ *
+ * @package acl
  */
+ 
 App::uses('AclAppModel', 'Acl.Model');
 App::uses('CakeEmail', 'Network/Email');
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
@@ -57,6 +66,16 @@ class User extends AclAppModel
             )
         )
     );
+    
+    
+    public function __construct( $id = false, $table = null, $ds = null)
+    {      
+  		parent::__construct( $id, $table, $ds);
+      
+      // BeforeFilter Event
+      $event = new CakeEvent( 'Acl.Model.User.construct', $this);
+  		$this->getEventManager()->dispatch($event);
+    }
 	
     function parentNode() {
         if( !$this->id && empty($this->data)) {
