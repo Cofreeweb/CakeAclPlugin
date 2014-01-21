@@ -45,7 +45,7 @@ class AclMgmShell extends AppShell
  * undocumented function
  *
  * @return void
- * @example Console/cake acl.acl_mgm add_user
+ * @example bin/cake acl.acl_mgm add_user
  */
   public function add_user()
   {
@@ -107,7 +107,7 @@ class AclMgmShell extends AppShell
  * undocumented function
  *
  * @return void
- * @example Console/cake acl.acl_mgm sync
+ * @example bin/cake acl.acl_mgm sync
  */
 	public function sync()
 	{

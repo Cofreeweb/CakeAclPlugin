@@ -18,7 +18,7 @@
 <div class="col-md-4">
     <div id="aco-edit"></div>
 </div>
-<? $this->append('script') ?>
+<? $this->append('scripts') ?>
     <script type="text/javascript">
     $(document).ready(function() {
         $("#acos").treeview({collapsed: true});

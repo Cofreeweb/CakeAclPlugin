@@ -63,7 +63,7 @@
     )) ?>
   </div>
   
-  <? $this->append( 'script') ?>
+  <? $this->append( 'scripts') ?>
     <script type="text/javascript">
       $(function(){
         $("#btn-change-password").click(function(){
