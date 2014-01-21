@@ -29,7 +29,6 @@ class UsersController extends AclAppController
       parent::beforeFilter();
       // App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
       // $this->layout = "admin";
-
       $this->Auth->allow( 
         'login', 
         'admin_login',
@@ -54,9 +53,8 @@ class UsersController extends AclAppController
       // BeforeFilter Event
       $event = new CakeEvent( 'Acl.Controller.Users.beforeFilter', $this);
   		$this->getEventManager()->dispatch($event);
-  		
     }
-
+    
     /**
      * login method
      *
@@ -120,7 +118,139 @@ class UsersController extends AclAppController
         );
         $this->set('users', $this->paginate("User"));
     }
+    
+   
+  /**
+   * edit method
+   *
+   * @param string $id
+   * @return void
+   */
+  public function edit() 
+  {
+    $has_password_errors = false;
+    
+    $id = $this->Auth->user( 'id');
+    
+    if( empty( $id))
+    {
+      $id = $this->Auth->user( 'User.id');
+    }
+    
+    $this->User->id = $id;
+    
+    $this->User->validator()->remove( 'email');
+    
+    if( !$this->User->exists()) 
+    {
+        throw new NotFoundException(__('Invalid user'));
+    }
+    
+    $this->request->data ['User']['id'] = $this->User->data ['User']['id'] = $id;
 
+    if( $this->request->is('post') || $this->request->is('put')) 
+    {
+        $valid = true;
+        
+        if( empty( $this->request->data ['User']['password']))
+        {
+          $this->User->validator()->remove( 'password');
+        }
+        
+        $password_changed = false;
+        
+        if( !empty( $this->request->data ['User']['password_current']))
+        {
+          $password = $this->Auth->password( $this->request->data ['User']['password_current']);
+          
+          if( $password != $this->User->field( 'password', array(
+              'User.id' => $id
+          )))
+          {
+            $this->User->invalidate( 'password_current', __( "Password is incorrect"));
+            $valid = false;
+          }
+          else
+          {
+            if( !empty( $this->request->data ['User']['password']))
+            {
+              $password_changed = true;
+            }
+          }
+        }
+
+        if( $valid && $this->User->saveAll( $this->request->data)) 
+        {
+          $this->request->data ['Company']['user_id'] = $this->User->id;
+          $this->User->Company->save( $this->request->data);
+          $this->Session->renew();
+          $user = $this->User->find( 'first', array(
+              'conditions' => array(
+                  'User.id' => $this->User->id
+              ),
+              'recursive' => -1
+          ));
+    			$this->Session->write( 'Auth.User', $user ['User']);
+    			$this->_setFlash( __('Your user data has been successfully updated'));
+    			
+    			if( $password_changed)
+    			{
+    			  Sender::send( 'changePassword', $user);
+    			}
+          $this->redirect(array(
+              'plugin' => false,
+              'controller' => 'companies',
+              'action' => 'my'
+          ));
+        } 
+        else 
+        {
+          
+          
+          // $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'alert/error');
+        }
+    } 
+    else 
+    {
+      $this->request->data = $this->User->read(null, $id);
+      $this->request->data ['User']['password'] = null;
+    }
+    
+    $this->set( compact( 'has_password_errors'));
+  }
+  
+  
+  public function change_email()
+  {
+    if( $this->request->is('post') || $this->request->is('put')) 
+    {
+      $password = $this->User->field( 'password', array(
+          'User.id' => $this->Auth->user( 'id')
+      ));
+      
+      if( $this->Auth->password( $this->request->data ['User']['password']) != $password)
+      {
+        $this->User->invalidate( 'password', __d( 'admin', "The password is incorrect"));
+      }
+      else
+      {
+        unset( $this->request->data ['User']['password']);
+        
+        if( $this->User->save( $this->request->data))
+        {
+          $this->_setFlash( __('Your user data has been successfully updated'));
+          $this->redirect(array(
+              'controller' => 'users',
+              'action' => 'edit'
+          ));
+        }
+      }
+    }
+    else
+    {
+      $this->request->data = $this->User->read(null, $this->Auth->user( 'id'));
+    }
+  }
     /**
      * view method
      *
@@ -312,31 +442,48 @@ class UsersController extends AclAppController
         }
         
         $token = String::uuid();
-        $this->request->data ['User']['token'] = $token;//key
+        $this->request->data ['User']['key'] = $token; //key
         
-        if( $this->User->save( $this->request->data)) 
+        if( $this->User->saveAll( $this->request->data)) 
         {
+          // AfterRegister Event
+          $event = new CakeEvent( 'Acl.Controller.Users.afterRegister', $this);
+      		$this->getEventManager()->dispatch($event);
+      		
+      		$user = $this->User->find( 'first', array(
+              'conditions' => array(
+                  'User.id' => $this->User->id
+              ),
+          ));
+          
+      		AclSender::send( 'registration', $user);
+      		
           $link = Router::url( array(
               'plugin' => 'acl',
               'controller' => 'users',
               'action' => 'confirm_register',
-              $user ['User']['id'],
-              $user ['User']['key']
+              $this->User->id,
+              $token
           ), true);
-
-          $this->Session->setFlash(__('Thank you for sign up! Please check your email to complete registration.'), 'alert/success');
+          
+          if( Configure::read( 'Acl.loginAfterRegister'))
+          {
+            $this->Auth->login( $user);
+            $this->redirect( Configure::read( 'Acl.redirectRegister'));
+          }
+          
+          $this->Session->setFlash( Settings::read( 'Acl.User.registerFlash'), 'alert/success');
           $this->request->data = null;
-          $this->redirect(array('action' => 'login'));
+          $this->redirect( array( 'action' => 'login'));
         } 
         else 
         {
-          $this->Session->setFlash(__('Register could not be completed. Please, try again.'), 'alert/error');
-          $this->redirect(array('action' => 'login'));
+          $this->Session->setFlash( Settings::read( 'Acl.User.registerFlashError'), 'alert/error');
         }
       }
       
-      $groups = $this->User->Group->find('list');
-      $this->set(compact('groups'));
+      $groups = $this->User->Group->find( 'list');
+      $this->set( compact( 'groups'));
     }
     /**
     * confirm register
@@ -345,10 +492,10 @@ class UsersController extends AclAppController
     public function confirm_register($ident=null, $activate=null) {//echo $ident.'  '.$activate;
         $return = $this->User->confirmRegister($ident, $activate);
         if( $return) {
-            $this->Session->setFlash(__('Congrats! Register Completed.'), 'alert/success');
+            $this->Session->setFlash( __('Congrats! Register Completed.'), 'alert/success');
             $this->redirect(array('action' => 'login'));
         } else {
-            $this->Session->setFlash(__('Something went wrong. Please, check your information.'), 'alert/error');
+            $this->Session->setFlash( __('Something went wrong. Please, check your information.'), 'alert/error');
         }
     }
     /**
@@ -363,12 +510,12 @@ class UsersController extends AclAppController
         
         if( $this->User->forgotPassword( $email)) 
         {
-          $this->Manager->flashSuccess( __( 'Por favor, revisa tu correo electrónico.'));
+          $this->Session->setFlash( Settings::read( 'Acl.User.forgotPasswordFlash'), 'alert/success');
           $this->redirect( array('action' => 'login'));
         } 
         else 
         {
-          $this->Manager->flashError( __( 'El email no es válido o no está en nuestra base de datos'));
+          $this->Session->setFlash( Settings::read( 'Acl.User.forgotPasswordFlashError'), 'alert/error');
         }
       }
     }

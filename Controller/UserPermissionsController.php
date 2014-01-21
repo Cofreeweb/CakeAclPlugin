@@ -28,7 +28,7 @@ class UserPermissionsController extends AclAppController
                 'order' => array('lft' => 'ASC'),
                 'recursive' => -1,
                 'fields' => array('alias', 'id', 'lft', 'rght', 'parent_id')
-                )
+                ) 
             );
 
         $this->__acos_details($results);

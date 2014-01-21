@@ -112,7 +112,8 @@ class User extends AclAppModel
         return true;
     }*/
 
-    public function beforeSave() {
+    public function beforeSave() 
+    {
         App::uses('Security', 'Utility');
         App::uses('String', 'Utility');
 
@@ -174,7 +175,7 @@ class User extends AclAppModel
             $expiredTime
         ), true);
 
-        AclSender::send( 'adminForgotPassword', $user, Configure::read( 'Config.siteName'), $link);
+        AclSender::send( 'adminForgotPassword', $user, Settings::read( 'App.Web.title'), $link);
         return true;
       }
       else 

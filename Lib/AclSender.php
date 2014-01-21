@@ -30,7 +30,7 @@ class AclSender extends EmailSender
     $Email->subject( __( "¡Welcome to Ebident!"));
         
     $link = Router::url( array(
-        'plugin' => 'acl_management',
+        'plugin' => 'acl',
         'controller' => 'users',
         'action' => 'confirm_register',
         $user ['User']['id'],
@@ -39,8 +39,10 @@ class AclSender extends EmailSender
 		
 		$Email->viewVars( compact( 'link'));
 		
-    $Email->template( 'Users/registration', 'users');
+    $Email->template( 'Users/registration', 'default');
     $Email->to( $user ['User']['email']);
     $Email->viewVars( compact( 'user'));
   }
+  
+  
 }
