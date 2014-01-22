@@ -84,6 +84,7 @@ class AclSchema extends CakeSchema {
     'name' => array('type' => 'string', 'null' => true),
     'slug' => array('type' => 'string', 'null' => true),
     'password' => array('type' => 'string', 'null' => true, 'default' => null),
+    'password2' => array('type' => 'string', 'null' => true, 'default' => null),
     'email' => array('type' => 'string', 'null' => true, 'default' => null),
     'avatar' => array('type' => 'string', 'null' => true, 'default' => null),
     'language' => array('type' => 'string', 'null' => true, 'default' => null),
