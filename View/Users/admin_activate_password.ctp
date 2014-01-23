@@ -15,7 +15,7 @@
 						<div class="widget-main">
 							<h4 class="header blue lighter bigger">
 								<i class="icon-arrow-down green"></i>
-								<?= __( "Por favor, introduce los datos")?>
+								<?= __d( 'admin', "Por favor, introduce los datos")?>
 							</h4>
 
 							<div class="space-6"></div>
@@ -28,7 +28,7 @@
                         'label' => false,
                         'div' => false,
                         'class' => 'form-control',
-                        'placeholder' => __( "Contraseña"),
+                        'placeholder' => __d( 'admin', "Contraseña"),
                         'type' => 'password'
 											))?>
 											<i class="icon-user"></i>
@@ -41,7 +41,7 @@
                         'label' => false,
                         'div' => false,
                         'class' => 'form-control',
-                        'placeholder' => __( "Repite contraseña"),
+                        'placeholder' => __d( 'admin', "Repite contraseña"),
                         'type' => 'password'
 											))?>
 											<i class="icon-user"></i>
@@ -52,7 +52,7 @@
 									<div class="clearfix">
 										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
 											<i class="icon-key"></i>
-											<?= __( "Enviar") ?>
+											<?= __d( 'admin', "Enviar") ?>
 										</button>
 									</div>
 

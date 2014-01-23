@@ -16,7 +16,7 @@
 						<div class="widget-main">
 							<h4 class="header blue lighter bigger">
 								<i class="icon-arrow-down green"></i>
-								<?= __( "Por favor, introduzca los datos")?>
+								<?= __d( 'admin', "Por favor, introduce los datos")?>
 							</h4>
 
 							<div class="space-6"></div>
@@ -29,7 +29,7 @@
                         'label' => false,
                         'div' => false,
                         'class' => 'form-control',
-                        'placeholder' => __( "Email"),
+                        'placeholder' => __d( 'admin', "Email"),
                         'type' => 'text'
 											))?>
 											<i class="icon-user"></i>
@@ -42,7 +42,7 @@
                         'label' => false,
                         'div' => false,
                         'class' => 'form-control',
-                        'placeholder' => __( "Contraseña"),
+                        'placeholder' => __d( 'admin', "Contraseña"),
                         'type' => 'password'
 											))?>
 											<i class="icon-lock"></i>
@@ -54,12 +54,12 @@
 									<div class="clearfix">
 										<label class="inline">
 											<input type="checkbox" class="ace" />
-											<span class="lbl"> <?= __( "Recordar")?></span>
+											<span class="lbl"> <?= __d( 'admin', "Recordar")?></span>
 										</label>
 
 										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
 											<i class="icon-key"></i>
-											<?= __( "Entrar") ?>
+											<?= __d( 'admin', "Entrar") ?>
 										</button>
 									</div>
 
@@ -77,7 +77,7 @@
 								    'action' => 'forgot_password'
 								)) ?>" class="forgot-password-link white">
 									<i class="icon-arrow-left"></i>
-									<?= __( "He olvidado mi contraseña")?>
+									<?= __d( 'admin', "He olvidado mi contraseña")?>
 								</a>
 							</div>
 						</div>

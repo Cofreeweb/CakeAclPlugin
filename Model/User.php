@@ -77,7 +77,7 @@ class User extends AclAppModel
   		$this->getEventManager()->dispatch($event);
     }
 	
-    function parentNode() {
+    public function parentNode() {
         if( !$this->id && empty($this->data)) {
             return null;
         }
@@ -123,8 +123,11 @@ class User extends AclAppModel
             $passwordHasher = new SimplePasswordHasher();
             $this->data['User']['password'] = $passwordHasher->hash($this->data['User']['password']);
         }
-
-        $this->data['User']['key'] = String::uuid();
+        
+        if( empty( $this->id))
+        {
+          $this->data['User']['key'] = String::uuid();
+        }
 
         return true;
     }  
@@ -150,7 +153,7 @@ class User extends AclAppModel
       return $r;
     }
 
-    function forgotPassword( $email) 
+    public function forgotPassword( $email) 
     {
       $user = $this->find( 'first', array(
           "conditions" => array(
@@ -174,8 +177,10 @@ class User extends AclAppModel
             $activate_key,
             $expiredTime
         ), true);
-
-        AclSender::send( 'adminForgotPassword', $user, Settings::read( 'App.Web.title'), $link);
+        
+        $params = Router::getParams(); ;
+        $email_view = isset( $params ['admin']) ? 'adminForgotPassword' : 'forgotPassword';
+        AclSender::send( $email_view, $user, Settings::read( 'App.Web.title'), $link);
         return true;
       }
       else 
@@ -184,16 +189,27 @@ class User extends AclAppModel
       }
     }
     
-    function confirmRegister($id, $token) {
-        $user = $this->find('count', array('conditions'=>array('User.id' => $id, 'User.token' => $token)));
-        if( $user) {
-           $this->saveAll(array('User'=>array('id'=>$id, 'status'=>1, 'token'=>'')), array('validate'=>false));
-           return true;
-        } 
-        return false;
+    
+    public function confirmRegister($id, $token) 
+    {
+      $user = $this->find( 'count', array(
+          'conditions' => array(
+              'User.id' => $id, 
+              'User.key' => $token
+          )
+      ));
+
+      if( $user) 
+      {
+        $this->id = $id;
+        $this->saveField( 'status', 1);
+        $this->saveField( 'key', null);
+        return true;
+      } 
+      return false;
     }    
 
-    function activatePassword($data) {
+    public function activatePassword($data) {
         $user = $this->read(null, $data['User']['ident']);
         if( $user) {
             $password = $user['User']['password'];

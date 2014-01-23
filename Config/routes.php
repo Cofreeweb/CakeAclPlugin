@@ -1,17 +1,9 @@
 <?php
 //list user
 Router::connect('/admin/users', array('plugin' => 'acl', 'controller' => 'users', 'action'=>'index'));
-//register
-Router::connect('/users/register', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'register'));
-Router::connect('/users/confirm_register', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'confirm_register'));
-Router::connect('/users/edit_profile', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'edit_profile'));
-Router::connect('/users/forgot_password', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'forgot_password'));
-Router::connect('/users/activate_password/*', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'activate_password'));
-//login
-Router::connect('/users/login', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'login'));
+
 Router::connect('/admin/users/login', array('admin'=>true, 'plugin' => 'acl', 'controller' => 'users', 'action' => 'login'));
 //logout
-Router::connect('/users/logout', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'logout'));
 Router::connect('/admin/users/logout', array('admin'=>true, 'plugin' => 'acl', 'controller' => 'users', 'action' => 'logout'));
 //user action
 Router::connect('/admin/users/add', array('plugin' => 'acl', 'controller' => 'users', 'action'=>'add'));
@@ -29,4 +21,23 @@ Router::connect('/admin/groups/delete/*', array('plugin' => 'acl', 'controller' 
 
 //list permissions
 Router::connect('/admin/user_permissions', array('plugin' => 'acl', 'controller' => 'user_permissions', 'action'=>'index'));
+
+$plugins = App::objects( 'plugin');
+
+if( in_array( 'I18n', $plugins))
+{
+  $params = array('routeClass' => 'I18nRoute');
+}
+else
+{
+  $params = array();
+}
+
+Router::connect('/users/logout', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'logout'), $params);
+Router::connect('/users/register', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'register'));
+Router::connect('/users/confirm_register', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'confirm_register'), $params);
+Router::connect('/users/edit_profile', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'edit_profile'), $params);
+Router::connect('/users/forgot_password', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'forgot_password'), $params);
+Router::connect('/users/activate_password/*', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'activate_password'), $params);
+Router::connect('/users/login', array('plugin' => 'acl', 'controller' => 'users', 'action' => 'login'), $params);
 ?>

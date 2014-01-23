@@ -238,31 +238,31 @@ class AclExtras{
 
 	public function getOptionParser() {
 		return parent::getOptionParser()
-			->description(__("Better manage, and easily synchronize you application's ACO tree"))
+			->description(("Better manage, and easily synchronize you application's ACO tree"))
 			->addSubcommand('aco_update', array(
-				'help' => __('Add new ACOs for new controllers and actions. Does not remove nodes from the ACO table.')
+				'help' => ('Add new ACOs for new controllers and actions. Does not remove nodes from the ACO table.')
 			))->addSubcommand('aco_sync', array(
-				'help' => __('Perform a full sync on the ACO table.' .
+				'help' => ('Perform a full sync on the ACO table.' .
 					'Will create new ACOs or missing controllers and actions.' .
 					'Will also remove orphaned entries that no longer have a matching controller/action')
 			))->addSubcommand('verify', array(
-				'help' => __('Verify the tree structure of either your Aco or Aro Trees'),
+				'help' => ('Verify the tree structure of either your Aco or Aro Trees'),
 				'parser' => array(
 					'arguments' => array(
 						'type' => array(
 							'required' => true,
-							'help' => __('The type of tree to verify'),
+							'help' => ('The type of tree to verify'),
 							'choices' => array('aco', 'aro')
 						)
 					)
 				)
 			))->addSubcommand('recover', array(
-				'help' => __('Recover a corrupted Tree'),
+				'help' => ('Recover a corrupted Tree'),
 				'parser' => array(
 					'arguments' => array(
 						'type' => array(
 							'required' => true,
-							'help' => __('The type of tree to recover'),
+							'help' => ('The type of tree to recover'),
 							'choices' => array('aco', 'aro')
 						)
 					)
@@ -298,9 +298,9 @@ class AclExtras{
 		$type = Inflector::camelize($this->args[0]);
 		$return = $this->Acl->{$type}->recover();
 		if ($return === true) {
-//			$this->out(__('Tree has been recovered, or tree did not need recovery.'));
+//			$this->out(('Tree has been recovered, or tree did not need recovery.'));
 		} else {
-//			$this->err(__('<error>Tree recovery failed.</error>'));
+//			$this->err(('<error>Tree recovery failed.</error>'));
 			return false;
 		}
 	}

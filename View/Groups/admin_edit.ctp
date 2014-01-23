@@ -9,7 +9,7 @@
     )) ?>
     
     <div class="col-md-offset-2 col-md-2">
-      <?= $this->Form->submit( __('Guardar')) ?>
+      <?= $this->Form->submit( __d( 'admin', 'Guardar')) ?>
     </div>
 <?= $this->Form->end() ?>
 </div>

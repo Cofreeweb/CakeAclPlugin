@@ -15,7 +15,7 @@
 						<div class="widget-main">
 							<h4 class="header blue lighter bigger">
 								<i class="icon-arrow-down green"></i>
-								<?= __( "Por favor, introduce los datos")?>
+								<?= __d( 'admin', "Por favor, introduce los datos")?>
 							</h4>
 
 							<div class="space-6"></div>
@@ -39,7 +39,7 @@
 									<div class="clearfix">
 										<button type="submit" class="width-35 pull-right btn btn-sm btn-primary">
 											<i class="icon-key"></i>
-											<?= __( "Enviar") ?>
+											<?= __d( 'admin', "Enviar") ?>
 										</button>
 									</div>
 

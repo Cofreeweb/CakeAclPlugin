@@ -39,7 +39,8 @@ class UsersController extends AclAppController
         'activate_password', 
         'admin_activate_password',
         'confirm_register', 
-        'confirm_email_update'
+        'confirm_email_update',
+        'send_confirm'
       );
 
       $this->User->bindModel(array('belongsTo'=>array(
@@ -195,9 +196,10 @@ class UsersController extends AclAppController
     			
     			if( $password_changed)
     			{
-    			  Sender::send( 'changePassword', $user);
+    			  AclSender::send( 'changePassword', $user, Settings::read( 'App.Web.title'));
     			}
-          $this->redirect(array(
+    			
+          $this->redirect( array(
               'plugin' => false,
               'controller' => 'companies',
               'action' => 'my'
@@ -456,7 +458,7 @@ class UsersController extends AclAppController
               ),
           ));
           
-      		AclSender::send( 'registration', $user);
+      		AclSender::send( 'registration', $user, Settings::read( 'App.Web.title'));
       		
           $link = Router::url( array(
               'plugin' => 'acl',
@@ -485,18 +487,51 @@ class UsersController extends AclAppController
       $groups = $this->User->Group->find( 'list');
       $this->set( compact( 'groups'));
     }
+    
+    public function send_confirm()
+    {
+      $this->autoRender = false;
+      
+      $user = $this->User->find( 'first', array(
+          'conditions' => array(
+              'User.id' => $this->Auth->user( 'id')
+          ),
+      ));
+      
+      AclSender::send( 'registration', $user, Settings::read( 'App.Web.title'));
+      
+      $this->redirect( $this->referer());
+    }
+    
     /**
     * confirm register
     * @return void
     */
-    public function confirm_register($ident=null, $activate=null) {//echo $ident.'  '.$activate;
-        $return = $this->User->confirmRegister($ident, $activate);
-        if( $return) {
-            $this->Session->setFlash( __('Congrats! Register Completed.'), 'alert/success');
-            $this->redirect(array('action' => 'login'));
-        } else {
-            $this->Session->setFlash( __('Something went wrong. Please, check your information.'), 'alert/error');
+    public function confirm_register( $ident = null, $activate = null) 
+    {
+      $return = $this->User->confirmRegister( $ident, $activate);
+      
+      if( $return) 
+      {
+        $this->Session->setFlash( __('¡El registro ha sido completado'), 'alert/success');
+        
+        if( $this->Auth->user())
+        {
+          $user = $this->User->find( 'first', array(
+              'conditions' => array(
+                  'User.id' => $ident
+              )
+          ));
+          
+          $this->Session->renew();
+    			$this->Session->write( 'Auth.User', $user);
+          $this->redirect( '/');
         }
+        else
+        {
+          $this->redirect( array( 'action' => 'login'));
+        }
+      } 
     }
     /**
     * forgot password
@@ -566,7 +601,7 @@ class UsersController extends AclAppController
             else
             {
               $errors = $this->User->validationErrors;
-              $this->Manager->flashError( __('Error Occur!'));
+              $this->Manager->flashError( ('Error Occur!'));
             }
           } 
           else 

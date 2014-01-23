@@ -72,6 +72,6 @@
       })
     </script>
   <? $this->end() ?>
-	<?= $this->Form->submit( __('Guardar')) ?>
+	<?= $this->Form->submit( __d( 'admin', 'Guardar')) ?>
 <?= $this->Form->end();?>
 </div>

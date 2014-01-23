@@ -41,4 +41,10 @@ class AuthHelper extends AppHelper
 		}
 		return Hash::get($user, $key);
 	}
+	
+	public function hasConfirmedEmail()
+	{
+	  $key = $this->user( 'key');
+	  return empty( $key);
+	}
 }
