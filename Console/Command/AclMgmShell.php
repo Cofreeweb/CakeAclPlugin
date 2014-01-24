@@ -88,6 +88,8 @@ class AclMgmShell extends AppShell
     
     $data ['status'] = 1;
     
+    $this->User->create();
+    
     if( $this->User->save( $data))
     {
       $this->out( 'Se ha creado el usuario <'. $data ['email'] .'> con id <'. $this->User->id .'>');
