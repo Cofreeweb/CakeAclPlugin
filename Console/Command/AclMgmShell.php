@@ -70,7 +70,7 @@ class AclMgmShell extends AppShell
     $ins = array(
         'email' => 'Email',
         'password' => 'Contraseña',
-        'password2' => 'Repite la contraseña',
+        'password2' => 'Repite la contraseña',  
         'name' => 'Nombre'
     );
     
