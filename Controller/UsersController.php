@@ -207,9 +207,9 @@ class UsersController extends AclAppController
         } 
         else 
         {
-          
-          
-          // $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'alert/error');
+          $data = $this->User->read(null, $id);
+          $this->request->data ['User'] = array_merge( $data ['User'], $this->request->data ['User']);
+          $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'alert/error');
         }
     } 
     else 
@@ -499,6 +499,8 @@ class UsersController extends AclAppController
       ));
       
       AclSender::send( 'registration', $user, Settings::read( 'App.Web.title'));
+      
+      $this->Session->setFlash( __('Se ha enviado un correo de confirmación'), 'alert/success');
       
       $this->redirect( $this->referer());
     }
