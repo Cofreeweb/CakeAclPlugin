@@ -96,10 +96,16 @@ class UsersController extends AclAppController
      *
      * @return void
      */
-    function logout() 
+    public function logout() 
     {
-        $this->redirect( $this->Auth->logout());
+      $this->redirect( $this->Auth->logout());
     }
+    
+    public function admin_logout() 
+    {
+      $this->redirect( $this->Auth->logout());
+    }
+    
     /**
      * index method
      *
