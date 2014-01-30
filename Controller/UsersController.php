@@ -106,26 +106,47 @@ class UsersController extends AclAppController
       $this->redirect( $this->Auth->logout());
     }
     
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function admin_index() 
-    {
-        $this->set('title', __('Users'));
-        $this->set('description', __('Manage Users'));
+  /**
+   * index method
+   *
+   * @return void
+   */
+  public function admin_index() 
+  {
+    $this->set('title', __('Users'));
+    $this->set('description', __('Manage Users'));
 
-        $this->User->recursive = 1;
-        $this->paginate = array(
-            'limit' => 10,
-            'conditions' => array(
-                'Group.level >=' => $this->Auth->user( 'Group.level') 
-            )
-        );
-        $this->set('users', $this->paginate("User"));
-    }
-    
+    $this->User->recursive = 1;
+    $this->paginate = array(
+        'limit' => 10,
+        'conditions' => array(
+            'Group.level >=' => $this->Auth->user( 'Group.level') 
+        )
+    );
+    $this->set('users', $this->paginate("User"));
+  }
+  
+  
+  public function admin_delete($id = null) 
+	{
+		$this->{$this->modelClass}->id = $id;
+		
+		if (!$this->{$this->modelClass}->exists()) 
+		{
+			throw new NotFoundException( __('Invalid content for delete'));
+		}
+
+		if ($this->{$this->modelClass}->delete()) 
+		{
+			$this->Manager->flashSuccess( __("El contenido ha sido borrado"));
+			$this->redirect( 'index');
+		} 
+		else 
+		{
+			$this->Manager->flashError( __( "El contenido no ha podido borrarse"));
+			$this->redirect( 'index');
+		}
+	}
    
   /**
    * edit method
