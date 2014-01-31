@@ -22,7 +22,7 @@ Router::connect('/admin/groups/delete/*', array('plugin' => 'acl', 'controller' 
 //list permissions
 Router::connect('/admin/user_permissions', array('plugin' => 'acl', 'controller' => 'user_permissions', 'action'=>'index'));
 
-$plugins = App::objects( 'plugin');
+$plugins = CakePlugin::loaded();
 
 if( in_array( 'I18n', $plugins))
 {
