@@ -140,12 +140,12 @@ class UsersController extends AclAppController
 
 		if ($this->{$this->modelClass}->delete()) 
 		{
-			$this->Manager->flashSuccess( __("El contenido ha sido borrado"));
+			$this->Manager->flashSuccess( __d("admin", "El contenido ha sido borrado"));
 			$this->redirect( 'index');
 		} 
 		else 
 		{
-			$this->Manager->flashError( __( "El contenido no ha podido borrarse"));
+			$this->Manager->flashError( __d( 'admin', "El contenido no ha podido borrarse"));
 			$this->redirect( 'index');
 		}
 	}

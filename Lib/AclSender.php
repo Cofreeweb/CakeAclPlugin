@@ -17,7 +17,7 @@ class AclSender extends EmailSender
   
   protected function forgotPassword( CakeEmail $Email, $user, $webname, $link)
   {
-    $Email->subject( __d( "acl", "Recuperar contraseña en %s", array(
+    $Email->subject( __( "Recuperar contraseña en %s", array(
         $webname
     )));
     $Email->template( 'Acl.forgot_password', 'Acl.default')
@@ -37,7 +37,7 @@ class AclSender extends EmailSender
   
   protected function registration( CakeEmail $Email, $user, $webname)
   {
-    $Email->subject( __d( 'acl', "¡Bienvenido a %s!", array(
+    $Email->subject( __( "¡Bienvenido a %s!", array(
         $webname
     )));
         
