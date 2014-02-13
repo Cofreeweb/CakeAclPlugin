@@ -12,8 +12,8 @@ class GroupsController extends AclAppController
 
     public function admin_index() 
     {
-        $this->set('title', __('Groups'));
-        $this->set('description', __('Manage Groups'));
+        $this->set('title', 'Groups');
+        $this->set('description', 'Manage Groups');
 
         $this->Group->recursive = 0;
         $this->set('groups', $this->paginate());
@@ -33,10 +33,10 @@ class GroupsController extends AclAppController
             
             if ($this->Group->save($this->request->data)) 
             {
-                $this->Session->setFlash(__('The group has been saved'), 'alert/success');
+                $this->Session->setFlash('The group has been saved', 'alert/success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The group could not be saved. Please, try again.'), 'alert/error');
+                $this->Session->setFlash('The group could not be saved. Please, try again.', 'alert/error');
             }
         }
     }
@@ -51,14 +51,14 @@ class GroupsController extends AclAppController
     {
         $this->Group->id = $id;
         if (!$this->Group->exists()) {
-            throw new NotFoundException(__('Invalid group'));
+            throw new NotFoundException('Invalid group');
         }
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Group->save($this->request->data)) {
-                $this->Session->setFlash(__('The group has been saved'), 'alert/success');
+                $this->Session->setFlash('The group has been saved', 'alert/success');
                 $this->redirect(array('action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The group could not be saved. Please, try again.'), 'alert/error');
+                $this->Session->setFlash('The group could not be saved. Please, try again.', 'alert/error');
             }
         } else {
             $this->request->data = $this->Group->read(null, $id);
@@ -78,13 +78,13 @@ class GroupsController extends AclAppController
         }
         $this->Group->id = $id;
         if (!$this->Group->exists()) {
-            throw new NotFoundException(__('Invalid group'), 'alert/error');
+            throw new NotFoundException('Invalid group', 'alert/error');
         }
         if ($this->Group->delete()) {
-            $this->Session->setFlash(__('Group deleted'), 'alert/success');
+            $this->Session->setFlash('Group deleted', 'alert/success');
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Group was not deleted'), 'alert/error');
+        $this->Session->setFlash('Group was not deleted', 'alert/error');
         $this->redirect(array('action' => 'index'));
     }
 

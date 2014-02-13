@@ -115,8 +115,8 @@ class UsersController extends AclAppController
    */
   public function admin_index() 
   {
-    $this->set('title', __('Users'));
-    $this->set('description', __('Manage Users'));
+    $this->set('title', 'Users');
+    $this->set('description', 'Manage Users');
 
     $this->User->recursive = 1;
     $this->paginate = array(
@@ -135,7 +135,7 @@ class UsersController extends AclAppController
 		
 		if (!$this->{$this->modelClass}->exists()) 
 		{
-			throw new NotFoundException( __('Invalid content for delete'));
+			throw new NotFoundException( 'Invalid content for delete');
 		}
 
 		if ($this->{$this->modelClass}->delete()) 
@@ -173,7 +173,7 @@ class UsersController extends AclAppController
     
     if( !$this->User->exists()) 
     {
-        throw new NotFoundException(__('Invalid user'));
+        throw new NotFoundException( 'Invalid user');
     }
     
     $this->request->data ['User']['id'] = $this->User->data ['User']['id'] = $id;
@@ -221,7 +221,7 @@ class UsersController extends AclAppController
               'recursive' => -1
           ));
     			$this->Session->write( 'Auth.User', $user ['User']);
-    			$this->_setFlash( __('Your user data has been successfully updated'));
+    			$this->_setFlash( 'Your user data has been successfully updated');
     			
     			if( $password_changed)
     			{
@@ -238,7 +238,7 @@ class UsersController extends AclAppController
         {
           $data = $this->User->read(null, $id);
           $this->request->data ['User'] = array_merge( $data ['User'], $this->request->data ['User']);
-          $this->Session->setFlash(__('The user could not be saved. Please, try again.'), 'alert/error');
+          $this->Session->setFlash('The user could not be saved. Please, try again.', 'alert/error');
         }
     } 
     else 
@@ -269,7 +269,7 @@ class UsersController extends AclAppController
         
         if( $this->User->save( $this->request->data))
         {
-          $this->_setFlash( __('Your user data has been successfully updated'));
+          $this->_setFlash( 'Your user data has been successfully updated');
           $this->redirect(array(
               'controller' => 'users',
               'action' => 'edit'
@@ -291,7 +291,7 @@ class UsersController extends AclAppController
     public function view($id = null) {
         $this->User->id = $id;
         if( !$this->User->exists()) {
-            throw new NotFoundException(__('Invalid user'), 'alert/error');
+            throw new NotFoundException('Invalid user', 'alert/error');
         }
         $this->set('user', $this->User->read(null, $id));
     }
@@ -350,7 +350,7 @@ class UsersController extends AclAppController
       
       if( !$user) 
       {
-         throw new NotFoundException( __('Invalid user'));
+         throw new NotFoundException( 'Invalid user');
       }
       
       if( $this->request->is('post') || $this->request->is('put')) 
