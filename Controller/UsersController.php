@@ -72,7 +72,7 @@ class UsersController extends AclAppController
         if( $this->Auth->login()) 
         {
           $this->User->id = $this->Auth->user( 'id');
-          $this->User->saveField( 'last_login', date( 'Y-d-m H:i:s'));
+          $this->User->saveField( 'last_login', date( 'Y-m-d H:i:s'));
           // AfterLogin Event
           $event = new CakeEvent( 'Acl.Controller.Users.afterLogin', $this);
       		$this->getEventManager()->dispatch($event);
