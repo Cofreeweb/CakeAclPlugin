@@ -47,4 +47,54 @@ class AuthHelper extends AppHelper
 	  $key = $this->user( 'key');
 	  return empty( $key);
 	}
+	
+/**
+ * Comprueba si el usuario tiene permisos sobre una URL dada o sobre la actual (si $url es false)
+ *
+ * @param string $url 
+ * @return void
+ * @example $this->Auth->hasPermissions( array( 'controller' => 'entries', 'action' => 'admin_edit'))
+ */
+	public function hasPermissions( $url = false)
+  {
+    if( !$url)
+    {
+      $url = array(
+          'plugin' => $this->request->params ['plugin'],
+          'controller' => $this->request->params ['controller'],
+          'action' => $this->request->params ['action']
+      );
+      
+      if( !empty( $this->request->params ['prefix']))
+      {
+        $url ['action'] = $this->request->params ['prefix'] .'_'. $this->request->params ['action'];
+      }
+    }
+
+    $aro = array( 'model' => 'Group', 'foreign_key' => $this->user( 'group_id'));
+    $aco = 'controllers';
+    
+    if( !empty( $url ['plugin']))
+    {
+      $aco .= '/'. Inflector::camelize( $url ['plugin']);
+    }
+    
+    if( !empty( $url ['controller']))
+    {
+      $aco .= '/'. Inflector::camelize( $url ['controller']);
+    }
+    
+    if( !empty( $url ['action']))
+    {
+      $action = !empty( $url ['admin']) ? 'admin_'. $url ['action'] : $url ['action']; 
+      $aco .= '/'. $action;
+    }
+    $permission = ClassRegistry::init( 'Permission')->check( $aro, $aco);
+    return $permission;
+  }
+	
+	public function isEditor()
+	{
+	  return $this->user();
+	}
 }

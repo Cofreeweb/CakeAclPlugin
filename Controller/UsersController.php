@@ -90,6 +90,12 @@ class UsersController extends AclAppController
     public function admin_login()
     {
       $this->layout = "login";
+      
+      if( $this->Auth->user())
+      {
+        $this->redirect('/');
+      }
+      
       $this->login();
     }
     

@@ -1,6 +1,7 @@
 <?php
 
 App::uses('AclAppController', 'Acl.Controller');
+App::uses( 'Access', 'Management.Lib');
 
 /**
  * Posts Controller
@@ -37,9 +38,10 @@ class UserPermissionsController extends AclAppController
     
     public function admin_index()
     {
-        $this->set('results', $this->__acosList());
+        $this->set( 'results', $this->__acosList());
     }
-
+    
+ 
     public function sync()
     {
         $this->layout = 'ajax';

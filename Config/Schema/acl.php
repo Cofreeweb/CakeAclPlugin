@@ -105,8 +105,10 @@ class AclSchema extends CakeSchema {
     'name' => array('type' => 'string', 'null' => true),
     'slug' => array('type' => 'string', 'null' => true),
     'level' => array('type' => 'integer', 'null' => true, 'default' => null),
+    'permissions' => array('type' => 'string', 'null' => true),
     'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
     'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
   );
+  
 }
