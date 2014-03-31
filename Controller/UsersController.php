@@ -234,10 +234,13 @@ class UsersController extends AclAppController
     			  AclSender::send( 'changePassword', $user, Settings::read( 'App.Web.title'));
     			}
     			
+    			$event = new CakeEvent( 'Acl.Controller.Users.afterSaveProfile', $this);
+    			$this->getEventManager()->dispatch($event);
+    			
           $this->redirect( array(
-              'plugin' => false,
-              'controller' => 'companies',
-              'action' => 'my'
+              'plugin' => 'acl',
+              'controller' => 'users',
+              'action' => 'edit'
           ));
         } 
         else 
@@ -483,6 +486,9 @@ class UsersController extends AclAppController
         
         if( $this->User->saveAll( $this->request->data)) 
         {
+          // Session de nuevo registro
+          $this->Session->write( 'Acl.newRegistration', true);
+          
           // AfterRegister Event
           $event = new CakeEvent( 'Acl.Controller.Users.afterRegister', $this);
       		$this->getEventManager()->dispatch($event);
