@@ -588,12 +588,12 @@ class UsersController extends AclAppController
         
         if( $this->User->forgotPassword( $email)) 
         {
-          $this->Session->setFlash( Settings::read( 'Acl.User.forgotPasswordFlash'), 'alert/success');
+          $this->Session->setFlash( __( 'Por favor, revisa tu correo electrónico.'), 'alert/success');
           $this->redirect( array('action' => 'login'));
         } 
         else 
         {
-          $this->Session->setFlash( Settings::read( 'Acl.User.forgotPasswordFlashError'), 'alert/error');
+          $this->Session->setFlash( __( 'El email no es válido o no está en nuestra base de datos.'), 'alert/error');
         }
       }
     }
@@ -612,12 +612,28 @@ class UsersController extends AclAppController
     {
       $nowTime = strtotime( date( 'Y-m-d H:i'));
       
-      if( empty( $expiredTime) || $nowTime > $expiredTime)
+      $user = $this->User->findById( $ident);
+      
+      $verify = false;
+      
+      if( $user)
+      {
+        $password = $user ['User']['password'];
+        $salt = Configure::read("Security.salt");
+        $thekey = md5($password . $salt);
+        
+        if( $thekey == $activate) 
+        {
+          $verify = true;
+        }
+      }
+
+      if( !$verify || empty( $expiredTime) || $nowTime > $expiredTime)
       {
         $this->Manager->flashError( __( 'El enlace ha caducado'));
         $this->redirect( array('action' => 'login'));
       }
-
+      
       if( $this->request->is( 'post')) 
       {
         if( !empty( $this->request->data ['User']['ident']) && !empty( $this->request->data ['User']['activate'])) 
