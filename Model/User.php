@@ -223,5 +223,21 @@ class User extends AclAppModel
             }
         } 
         return false;
-    }    
+    }
+    
+/**
+ * Quita toda las validaciones excepto la de la contraseña
+ *
+ * @return void
+ */
+    public function removeValidationRecoverPassword()
+    {
+      foreach( $this->validate as $key => $rules)
+      {
+        if( strpos( $key, 'password') === false)
+        {
+          $this->validator()->remove( $key);
+        }
+      }
+    }
 }

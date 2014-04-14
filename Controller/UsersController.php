@@ -647,6 +647,8 @@ class UsersController extends AclAppController
           {
             $this->User->set( $this->request->data);
             
+            $this->User->removeValidationRecoverPassword();
+            
             if( $this->User->validates()) 
             {
               $this->request->data ['User']['id'] = $this->request->data ['User']['ident'];
