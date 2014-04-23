@@ -9,7 +9,7 @@
  * Acl.Controller.Users.beforeLogin
  * Acl.Controller.Users.afterLogin
  * Acl.Controller.Users.afterAdminCreate
- * 
+ * Acl.Controller.Users.afterConfirmation
  *
  * @package acl
  */
@@ -568,6 +568,11 @@ class UsersController extends AclAppController
           
           $this->Session->renew();
     			$this->Session->write( 'Auth.User', $user);
+    			
+    			// afterConfirmation Event
+          $event = new CakeEvent( 'Acl.Controller.Users.afterConfirmation', $this);
+      		$this->getEventManager()->dispatch($event);
+      		
           $this->redirect( '/');
         }
         else
