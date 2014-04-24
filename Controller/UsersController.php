@@ -512,6 +512,7 @@ class UsersController extends AclAppController
           if( Configure::read( 'Acl.loginAfterRegister'))
           {
             $this->Auth->login( $user);
+            $this->User->saveField( 'last_login', date( 'Y-m-d H:i:s'));
             $this->redirect( Configure::read( 'Acl.redirectRegister'));
           }
           
