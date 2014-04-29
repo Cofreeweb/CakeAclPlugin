@@ -22,6 +22,12 @@ $config ['Access'] = array(
                 'controller' => 'users',
                 'action' => 'index'
             )
-      )
+      ),
+      'alwaysLinks' => array(
+          array(
+              'label' => __d( 'admin', 'Grupos de usuarios'),
+              'url' => '#/groups'
+          )
+      ),
     )
 );

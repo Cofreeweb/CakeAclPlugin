@@ -57,6 +57,12 @@ class AuthHelper extends AppHelper
  */
 	public function hasPermissions( $url = false)
   {
+    // Si ni siquiera está logueado devolvemos false
+    if( !$this->user())
+    {
+      return false; 
+    }
+    
     if( !$url)
     {
       $url = array(
@@ -76,7 +82,7 @@ class AuthHelper extends AppHelper
     
     if( !empty( $url ['plugin']))
     {
-      $aco .= '/'. Inflector::camelize( $url ['plugin']);
+      $aco .= '/'. Inflector::camelize( $url ['plugin']); 
     }
     
     if( !empty( $url ['controller']))
@@ -91,6 +97,25 @@ class AuthHelper extends AppHelper
     }
     $permission = ClassRegistry::init( 'Permission')->check( $aro, $aco);
     return $permission;
+  }
+  
+/**
+ * Resuelve si el usuario tiene acceso a una key dada
+ *
+ * @param string $key 
+ * @return void
+ */
+  public function hasAccessKey( $key)
+  {
+    // Si ni siquiera está logueado devolvemos false
+    if( !$this->user())
+    {
+      return false; 
+    }
+    
+    $permissions = $this->user( 'Group.permissions');
+    
+    return (!empty( $permissions) && in_array( $key, $permissions));
   }
 	
 	public function isEditor()
