@@ -111,4 +111,21 @@ class AclSchema extends CakeSchema {
     'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
   );
   
+  public $invitations = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'primary'),
+		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'new_user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
+		'email' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index'),
+		'salt' => array('type' => 'string', 'null' => true, 'default' => null),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'user_id' => array('column' => 'user_id', 'unique' => 0),
+			'new_user_id' => array('column' => 'new_user_id', 'unique' => 0),
+			'email' => array('column' => 'email', 'unique' => 0),
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_unicode_ci', 'engine' => 'InnoDB')
+	);
+  
 }

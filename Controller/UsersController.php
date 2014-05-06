@@ -461,6 +461,20 @@ class UsersController extends AclAppController
      */
     public function register() 
     {
+      // Invitation
+      if( isset( $this->request->query ['invitation']))
+      {
+        $this->loadModel( 'Acl.Invitation');
+        
+        $invitation = $this->Invitation->findBySalt( $this->request->query ['invitation']);
+        
+        if( $invitation)
+        {
+          $this->Session->write( 'Invitation', $invitation ['Invitation']['id']);
+        }
+      }
+      
+      
       if( $this->request->is( 'post')) 
       {
         $this->loadModel( 'Acl.User');
@@ -498,6 +512,18 @@ class UsersController extends AclAppController
                   'User.id' => $this->User->id
               ),
           ));
+          
+          
+          // Invitation
+          // Marca el id de usuario en la invitation
+          if( $this->Session->read( 'Invitation'))
+          {
+            $this->loadModel( 'Acl.Invitation');
+            
+            $this->Invitation->id = $this->Session->read( 'Invitation');
+            $this->Invitation->saveField( 'new_user_id', $this->User->id);
+            $this->Invitation->saveField( 'salt', null);
+          }
           
       		AclSender::send( 'registration', $user, Settings::read( 'App.Web.title'));
       		

@@ -64,5 +64,16 @@ class AclSender extends EmailSender
     $Email->to( $user ['User']['email']);
   }
   
+  protected function invitation( CakeEmail $Email, $invitation, $user, $webname)
+  {    
+    $Email->subject( __d( "email", "%s te ha invitado a participar en %s", array(
+        $user ['name'],
+        $webname
+    )));
+		$Email->template( 'Acl.invitation', 'users');
+		$Email->viewVars( compact( 'invitation', 'user'));
+    $Email->to( $invitation ['Invitation']['email']);
+  }
+  
   
 }

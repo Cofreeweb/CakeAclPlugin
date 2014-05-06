@@ -131,7 +131,18 @@ class User extends AclAppModel
 
         return true;
     }  
-
+    
+    
+    public function afterSave( $created, $options = array())
+    {
+      parent::afterSave( $created);
+      
+      // AfterSave Event
+      $event = new CakeEvent( 'Acl.Model.User.afterSave', $this);
+  		$this->getEventManager()->dispatch($event);
+    }
+    
+    
     public function comparePwd($check) 
     {
       $check['password'] = trim($check['password']);
