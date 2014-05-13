@@ -542,13 +542,13 @@ class UsersController extends AclAppController
             $this->redirect( Configure::read( 'Acl.redirectRegister'));
           }
           
-          $this->Session->setFlash( Settings::read( 'Acl.User.registerFlash'), 'alert/success');
+          $this->Session->setFlash( __( '¡Gracias por registrarte! Te hemos enviado un email para verificar tu cuenta.'), 'alert/success');
           $this->request->data = null;
           $this->redirect( array( 'action' => 'login'));
         } 
         else 
         {
-          $this->Session->setFlash( Settings::read( 'Acl.User.registerFlashError'), 'alert/error');
+          $this->Session->setFlash( __( 'No ha sido posible realizar el registro correctamente. Por favor, inténtalo de nuevo.'), 'alert/error');
         }
       }
       
