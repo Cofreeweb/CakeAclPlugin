@@ -23,7 +23,9 @@ class AclAccessComponent extends Component
     }
     
     $group = $this->Auth->user( 'Group');
-    $permissions = $group ['permissions'];
+    
+    $permissions = Access::getUserPermissions( $group ['permissions']);
+    
     $aro = ClassRegistry::init( 'Acl.Group')->Aro->find( 'first', array(
         'conditions' => array(
             'Aro.model' => 'Group',
