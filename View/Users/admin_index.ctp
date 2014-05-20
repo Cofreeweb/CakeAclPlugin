@@ -30,7 +30,7 @@
       			      'class' => 'btn btn-xs btn-success',
       			      'escape' => false
       			  )) ?>
-      			  
+
       			  <?= $this->Html->link( '<i class="icon-trash bigger-120"></i>', array(
       			      'action' => 'delete',
       			      $user ['User']['id']

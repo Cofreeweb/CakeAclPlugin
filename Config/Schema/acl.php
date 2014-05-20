@@ -116,6 +116,7 @@ class AclSchema extends CakeSchema {
 		'user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
 		'new_user_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'key' => 'index'),
 		'email' => array('type' => 'string', 'null' => false, 'default' => null, 'key' => 'index'),
+		'body' => array('type' => 'text', 'null' => false, 'default' => null),
 		'salt' => array('type' => 'string', 'null' => true, 'default' => null),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'modified' => array('type' => 'datetime', 'null' => true, 'default' => null),
