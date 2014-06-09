@@ -9,6 +9,8 @@
  * Acl.Controller.Users.beforeLogin
  * Acl.Controller.Users.afterLogin
  * Acl.Controller.Users.afterAdminCreate
+ * Acl.Controller.Users.beforeRegister
+ * Acl.Controller.Users.afterRegister
  * Acl.Controller.Users.afterConfirmation
  *
  * @package acl
@@ -461,6 +463,10 @@ class UsersController extends AclAppController
      */
     public function register() 
     {
+      // beforeRegister Event
+      $event = new CakeEvent( 'Acl.Controller.Users.beforeRegister', $this);
+  		$this->getEventManager()->dispatch($event);
+  		
       // Invitation
       if( isset( $this->request->query ['invitation']))
       {
