@@ -12,6 +12,8 @@
  * Acl.Controller.Users.beforeRegister
  * Acl.Controller.Users.afterRegister
  * Acl.Controller.Users.afterConfirmation
+ * Acl.Controller.Users.adminEdit
+ * Acl.Controller.Users.adminAdd
  *
  * @package acl
  */
@@ -336,6 +338,10 @@ class UsersController extends AclAppController
         }
       }
       
+      // adminEdit Event
+      $event = new CakeEvent( 'Acl.Controller.Users.adminAdd', $this);
+      $this->getEventManager()->dispatch($event);
+
       $this->__setAdminGroups();
     }
 
@@ -407,6 +413,10 @@ class UsersController extends AclAppController
       }
 
       $this->__setAdminGroups();
+
+      // adminEdit Event
+      $event = new CakeEvent( 'Acl.Controller.Users.adminEdit', $this);
+      $this->getEventManager()->dispatch($event);
     }
     
     public function __setAdminGroups()

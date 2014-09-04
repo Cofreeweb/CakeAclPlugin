@@ -18,17 +18,14 @@ class AclSchema extends CakeSchema {
       if( Configure::read( 'Acl.schema.'. $table))
       {
         $schema = Configure::read( 'Acl.schema.'. $table);
-        
-        if( isset( $schema ['indexes']))
-        {
-          $_schema =  $this->$table;
+        $this->$table = array_merge_recursive( $this->$table, $schema);
 
-          $_schema ['indexes']  = array_merge( $_schema ['indexes'], $schema ['indexes']);
-          $this->$table = $_schema;
-          unset( $schema ['indexes']);
+        if( isset( $this->{$table}['indexes']))
+        {
+          $indexes = $this->{$table}['indexes'];
+          unset( $this->{$table}['indexes']);
+          $this->{$table}['indexes'] = $indexes;
         }
-        
-        $this->$table = array_merge( $this->$table, $schema);
       }
     }
     

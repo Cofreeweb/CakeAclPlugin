@@ -7,6 +7,11 @@
         'type' => 'text',
         'label' => 'Nombre'
     )) ?>
+
+    <?= $this->Form->input( 'Group.level', array(
+        'type' => 'text',
+        'label' => 'Level',
+    )) ?>
     
     <div class="col-md-offset-2 col-md-2">
       <?= $this->Form->submit( __d( 'admin', 'Guardar')) ?>
