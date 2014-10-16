@@ -20,6 +20,7 @@ class User extends AclAppModel
     public $name = 'User';
     public $useTable = "users";
     public $actsAs = array(
+        'Containable',
         'Acl' => array(
             'type' => 'requester'
         ),
@@ -124,6 +125,13 @@ class User extends AclAppModel
             $this->data['User']['password'] = $passwordHasher->hash($this->data['User']['password']);
         }
         
+        if( empty($this->data['User']['password2'])) { # empty password -> do not update
+            unset($this->data['User']['password2']);
+        } else {
+            $passwordHasher = new SimplePasswordHasher();
+            $this->data['User']['password2'] = $passwordHasher->hash($this->data['User']['password2']);
+        }
+
         if( empty( $this->id))
         {
           $this->data['User']['key'] = String::uuid();

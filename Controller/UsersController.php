@@ -28,7 +28,7 @@ class UsersController extends AclAppController
 {
     public $uses = array('Acl.User');
 
-    function beforeFilter() 
+    public function beforeFilter() 
     {
       parent::beforeFilter();
       // App::build( array( 'View' => App::pluginPath( 'Management') .'View'. DS));
@@ -65,7 +65,7 @@ class UsersController extends AclAppController
      *
      * @return void
      */
-    function login() 
+    public function login() 
     {      
       // BeforeLogin Event
       $event = new CakeEvent( 'Acl.Controller.Users.beforeLogin', $this);
@@ -362,6 +362,9 @@ class UsersController extends AclAppController
           'conditions' => array(
               'User.id' => $id,
               'Group.level >=' => $this->Auth->user( 'Group.level') 
+          ),
+          'contain' => array(
+              'Group'
           )
       ));
       
