@@ -34,7 +34,7 @@ class Group extends AclAppModel
         return null;
     }
     
-    public function afterFind( $results)
+    public function afterFind( $results, $primary = false)
     {
       if( isset( $results [0][$this->alias]))
       {
@@ -54,9 +54,9 @@ class Group extends AclAppModel
       return $results;
     }
     
-    public function beforeSave( $created = false)
+    public function beforeSave( $options = array())
     {
-      parent::beforeSave( $created);
+      parent::beforeSave( $options);
       
       if( isset( $this->data [$this->alias]['permissions']) && is_array( $this->data [$this->alias]['permissions']))
       {

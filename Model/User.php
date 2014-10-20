@@ -113,7 +113,7 @@ class User extends AclAppModel
         return true;
     }*/
 
-    public function beforeSave() 
+    public function beforeSave( $options = array()) 
     {
         App::uses('Security', 'Utility');
         App::uses('String', 'Utility');
