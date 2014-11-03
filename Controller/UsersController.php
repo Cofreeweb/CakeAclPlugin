@@ -137,6 +137,31 @@ class UsersController extends AclAppController
     );
     $this->set('users', $this->paginate("User"));
   }
+
+  /**
+   * admin_search method
+   *
+   * @return void
+   */
+  public function admin_search() 
+  {
+    if( !empty( $this->data))
+    {
+      $name = $this->data['User']['name'];
+      $this->set('title', 'Users');
+      $this->set('description', 'Manage Users');
+
+      $this->User->recursive = 1;
+      $this->paginate = array(
+          'limit' => 10,
+          'conditions' => array(
+              'Group.level >=' => $this->Auth->user( 'Group.level'),
+              'User.name ILIKE' => "%$name%"
+          )
+      );
+      $this->set('users', $this->paginate("User"));
+    }
+  }
   
   
   public function admin_delete($id = null) 
