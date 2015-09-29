@@ -45,11 +45,11 @@
   
   <h5 class="header smaller lighter green"><i class="icon-lock"></i> <span class="pointer" id="btn-change-password"><?= __d( 'admin', "Cambiar contraseña") ?></span></h5>
     <div id="div-change-password" class="<?= !$has_password_errors ? "hidden" : '' ?>">
-    <?= $this->Form->input( 'User.password_current', array(
-        'label' => __d( 'admin', "Contraseña actual"),
-        'type' => 'password',
-        'required' => false
-    )) ?>
+    <?//= $this->Form->input( 'User.password_current', array(
+      //  'label' => __d( 'admin', "Contraseña actual"),
+      //  'type' => 'password',
+      //  'required' => false
+    //)) ?>
   
     <?= $this->Form->input( 'User.password', array(
         'label' => __d( 'admin', "Nueva contraseña"),
@@ -58,6 +58,7 @@
     
     <?= $this->Form->input( 'User.password2', array(
         'type' => 'password',
+        'value' => '',
         'label' => __d( 'admin', "Repite la contraseña"),
         'required' => false
     )) ?>
